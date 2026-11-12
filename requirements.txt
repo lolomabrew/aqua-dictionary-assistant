@@ -1,7 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 streamlit==1.50.0
-ja-ginza==5.2.0
-ginza==5.2.0
-spacy==3.7.5
+transformers==5.19.0
+torch==2.8.0
 numpy==1.26.4
 SudachiPy==0.6.11
 SudachiDict-core==20260723
+huggingface-hub==2.4.0

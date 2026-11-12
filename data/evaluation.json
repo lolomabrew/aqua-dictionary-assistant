@@ -1,17 +1,17 @@
-{
-  "provenance": "2026-11-12に本アプリ用に作成した架空の文章。実在する製品・組織の名称を含むが、個人の音声履歴や業務データは使用していない。",
-  "purpose": "辞書登録を検討する名称の抽出と、入力内に根拠のある類似表記の提示。誤認識の正解データではない。",
-  "selection_policy": "expected_termsは、架空の利用者が辞書登録したいと設定した名称。一般語や単なる出現頻度だけで有用性を断定しない。モデル実行前に作成。合格精度を示す評価ではない。",
-  "cases": [
-    {"id":"dev-01","split":"development","text":"Notionに勉強の記録を書きます。Notionの画面を開きます。GitHubで練習用のコードを管理します。GitHubの説明を読みます。","expected_terms":["Notion","GitHub"],"known":"","expected_pairs":[]},
-    {"id":"dev-02","split":"development","text":"辞書登録を始めます。自社登録の候補を探します。辞書登録の結果を確認します。今日は机を片付けました。","expected_terms":["辞書登録","自社登録"],"known":"辞書登録","expected_pairs":[["自社登録","辞書登録"]]},
-    {"id":"test-01","split":"evaluation","text":"Blenderで模型を作ります。Blenderの操作を練習します。Inkscapeで説明図を描きます。Inkscapeの使い方を読みます。今日は散歩に行きました。","expected_terms":["Blender","Inkscape"],"known":"","expected_pairs":[]},
-    {"id":"test-02","split":"evaluation","text":"PostgreSQLでデータを保存します。PostgreSQLの設定を確認します。Dockerで環境を作ります。Dockerの説明書を読みます。午後はお茶を飲みました。","expected_terms":["PostgreSQL","Docker"],"known":"","expected_pairs":[]},
-    {"id":"test-03","split":"evaluation","text":"架空の学習会で国立天文台について調べました。国立天文台の公開資料を読みます。理化学研究所についても調べます。理化学研究所の紹介を読みます。","expected_terms":["国立天文台","理化学研究所"],"known":"","expected_pairs":[]},
-    {"id":"test-04","split":"evaluation","text":"京都大学の公開講座について調べます。京都大学の紹介ページを読みます。東京工業大学という名称が過去の資料に出てきました。東京工業大学という表記を確認します。","expected_terms":["京都大学","東京工業大学"],"known":"","expected_pairs":[]},
-    {"id":"test-05","split":"evaluation","text":"辞書登録の手順を読みます。自社登録の手順も確認したいです。辞書登録をやり直します。昨日は机を掃除しました。","expected_terms":["辞書登録","自社登録"],"known":"辞書登録","expected_pairs":[["自社登録","辞書登録"]]},
-    {"id":"test-06","split":"evaluation","text":"構成は各論から書きます。格論の内容を詳しくします。各論の見出しを確認します。休憩してから作業を再開します。","expected_terms":["各論","格論"],"known":"各論","expected_pairs":[["格論","各論"]]},
-    {"id":"test-07","split":"evaluation","text":"今日は散歩をしました。帰宅してお茶を飲みました。机を片付けて本を読みました。","expected_terms":[],"known":"","expected_pairs":[]},
-    {"id":"test-08","split":"evaluation","text":"連絡にはZoomを使います。ZOOMの画面を開いてください。Zoomの設定を確認します。","expected_terms":["Zoom","ZOOM"],"known":"Zoom","expected_pairs":[["ZOOM","Zoom"]]}
-  ]
-}
+{"provenance":"本アプリ用の架空文。実際のユーザー履歴は使用しない。v0.2の実装前に作成。", "cases":[
+{"id":"dev-01","split":"development","text":"Aqua Voiceの自社登録に単語を追加して誤変換を防ぎたいです。","errors":[{"wrong":"自社","correct":"辞書"}]},
+{"id":"dev-02","split":"development","text":"概論ではなく格論から説明してください。","errors":[{"wrong":"格論","correct":"各論"}]},
+{"id":"dev-03","split":"development","text":"これは日本語の誤植を検出する真相学習モデルです。","errors":[{"wrong":"真相","correct":"深層"}]},
+{"id":"test-01","split":"evaluation","text":"この川には長い箸が架かっています。","errors":[{"wrong":"箸","correct":"橋"}]},
+{"id":"test-02","split":"evaluation","text":"ご飯を橋で食べます。","errors":[{"wrong":"橋","correct":"箸"}]},
+{"id":"test-03","split":"evaluation","text":"新聞の帰社が現場で取材しています。","errors":[{"wrong":"帰社","correct":"記者"}]},
+{"id":"test-04","split":"evaluation","text":"この制度の対照は高校生です。","errors":[{"wrong":"対照","correct":"対象"}]},
+{"id":"test-05","split":"evaluation","text":"関係者意外の人は入れません。","errors":[{"wrong":"意外","correct":"以外"}]},
+{"id":"test-06","split":"evaluation","text":"とても以外な結果になりました。","errors":[{"wrong":"以外","correct":"意外"}]},
+{"id":"test-07","split":"evaluation","text":"会議の議事録を作成します。","errors":[]},
+{"id":"test-08","split":"evaluation","text":"このモデルは文章を分析します。","errors":[]},
+{"id":"test-09","split":"evaluation","text":"講演を聞くために会場へ向かいます。","errors":[]},
+{"id":"test-10","split":"evaluation","text":"公園で子どもたちが遊んでいます。","errors":[]},
+{"id":"test-11","split":"evaluation","text":"Notionでメモを書き、GitHubにコードを保存します。","errors":[]},
+{"id":"test-12","split":"evaluation","text":"今日は図書館で本を借りました。","errors":[]}
+]}

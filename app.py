@@ -1,126 +1,111 @@
 import streamlit as st
-from analyzer import analyze, dictionary_export, load_model
+from analyzer import analyze, dictionary_export, load_model, VERSION
 from sample import SAMPLE
 
-st.set_page_config(page_title='ことばの辞書候補', page_icon='📖', layout='wide')
+st.set_page_config(page_title='誤変換を見つける辞書アシスト',page_icon='🔎',layout='wide')
 st.markdown('''<style>
-.block-container {max-width: 1120px; padding-top: 2.6rem;}
-h1 {letter-spacing: -.04em;}
-div[data-testid="stMetric"] {background:#EEEFEA;padding:18px;border-radius:12px;}
-div[data-testid="stTextArea"] textarea {line-height:1.8;}
-</style>''', unsafe_allow_html=True)
-st.caption('音声入力を、少しずつ使いやすく。')
-st.title('ことばの辞書候補')
-st.write('音声入力の履歴を貼ると、辞書に登録したい名称や、確認したい表記の候補を見つけます。')
+.block-container{max-width:1120px;padding-top:2.6rem}h1{letter-spacing:-.04em}
+div[data-testid="stMetric"]{background:#EEEFEA;padding:18px;border-radius:12px}
+div[data-testid="stTextArea"] textarea{line-height:1.8}
+</style>''',unsafe_allow_html=True)
+st.caption('意図と違う変換を見つけて、次の音声入力に備える。')
+st.title('誤変換を見つける辞書アシスト')
+st.write('履歴の文脈から、意図しない変換の疑いと修正候補をモデルが推定します。確認した正しい言葉を、あなたの辞書に登録してください。')
 st.info('公開版には架空の文章を入力してください。個人情報・職場の業務情報は入力しないでください。')
-
-if 'transcript' not in st.session_state:
-    st.session_state.transcript = ''
-if 'known_terms' not in st.session_state:
-    st.session_state.known_terms = ''
-left, right = st.columns([3, 1])
+if st.session_state.get('app_version')!=VERSION:
+    st.session_state.clear()
+    st.session_state.app_version=VERSION
+st.session_state.setdefault('transcript','')
+st.session_state.setdefault('known_terms','')
+left,right=st.columns([3,1])
 with left:
-    st.subheader('1. 履歴を貼り付ける')
+    st.subheader('1. 音声入力の履歴を貼る')
 with right:
-    if st.button('架空のサンプルで試す', use_container_width=True):
-        st.session_state.transcript = SAMPLE
-        st.session_state.known_terms = '辞書登録'
-        st.session_state.pop('result', None)
-text = st.text_area('音声入力の履歴', key='transcript', height=260, max_chars=20000,
-                    placeholder='複数の履歴をまとめて、そのまま貼り付けてください。最大20,000文字。')
-with st.expander('既存の辞書と照合する（任意）'):
-    st.text_area('登録済みの正しい表記を1行に1語', key='known_terms', height=120,
-                 help='未入力でも分析できます。入力すると登録済みの語を区別し、似た読みの語と照合します。最大200語。')
-st.caption('文章だけでは誤認識を断定できません。表示するのは登録・確認の候補です。')
+    if st.button('架空のサンプルで試す',use_container_width=True):
+        st.session_state.transcript=SAMPLE
+        st.session_state.known_terms=''
+        st.session_state.pop('result',None)
+text=st.text_area('音声入力の履歴',key='transcript',height=240,max_chars=20000,
+                  placeholder='複数の履歴をまとめて貼れます。正しい表記や、修正前後のデータの用意は不要です。')
+with st.expander('登録済みの辞書を照合する（任意）'):
+    st.text_area('登録済みの正しい表記を1行1語',key='known_terms',height=110,
+                 help='空欄でも推定します。入力すると追加候補として比較し、登録済みかも表示します。最大200語。')
+st.caption('音声や本人の意図がないため、誤変換は断定しません。人間が確認するための候補です。')
 
 @st.cache_resource(show_spinner=False)
 def model():
     return load_model()
 
-if st.button('辞書候補を見つける', type='primary', disabled=not text.strip()):
+if st.button('意図しない変換を探す',type='primary',disabled=not text.strip()):
     try:
-        with st.spinner('文章から名称や表記の候補を探しています…'):
-            result = analyze(text, st.session_state.known_terms, model())
-        st.session_state.result = result
-        st.session_state.analyzed_input = (text, st.session_state.known_terms)
-        st.session_state.run_id = st.session_state.get('run_id', 0) + 1
+        bar=st.progress(0,text='モデルを準備しています。初回はダウンロードに時間がかかります。')
+        result=analyze(text,st.session_state.known_terms,model(),progress=lambda p,msg:bar.progress(p,text=msg))
+        bar.empty()
+        st.session_state.result=result
+        st.session_state.analyzed_input=(text,st.session_state.known_terms)
+        st.session_state.run_id=st.session_state.get('run_id',0)+1
     except ValueError as exc:
         st.error(str(exc))
     except Exception:
-        st.error('分析を完了できませんでした。文章を短くして再試行してください。サンプルでも失敗する場合は管理者にモデルの設定確認を依頼してください。')
+        st.error('分析を完了できませんでした。短い文章で再試行してください。初回のモデル取得にはインターネット接続が必要です。')
 
 if 'result' in st.session_state:
-    result = st.session_state.result
-    stale = st.session_state.analyzed_input != (text, st.session_state.known_terms)
+    result=st.session_state.result
+    stale=st.session_state.analyzed_input!=(text,st.session_state.known_terms)
     if stale:
         st.warning('入力が変わっています。以下は前回の結果です。再度分析してください。')
-    candidates = result['candidates']
-    a, b, c = st.columns(3)
-    a.metric('登録・確認の候補', f'{len(candidates)} 語')
-    b.metric('似た表記のある候補', f"{sum(bool(x['alternatives']) for x in candidates)} 語")
-    c.metric('登録済みの候補', f"{sum(x['registered'] for x in candidates)} 語")
-    st.subheader('2. 根拠を見て、登録する言葉を選ぶ')
-    st.caption('優先順は登録の検討順です。正しさの確率や、誤認識の回数を示すものではありません。')
-    show_registered = st.checkbox('登録済みの語も表示する', value=False)
-    shown = [x for x in candidates if show_registered or not x['registered']]
-    if result['candidate_limit_reached']:
-        st.warning('候補が多いため、優先度の高い160語を対象に比較しました。履歴を分けると詳しく確認できます。')
-    if not shown:
-        st.info('新しい候補は見つかりませんでした。登録済みの表示を切り替えるか、別の文章を試してください。')
-    page_size = 12
-    pages = max(1, (len(shown) + page_size - 1) // page_size)
-    page = st.number_input('候補のページ', min_value=1, max_value=pages, step=1, key=f"page-{st.session_state.run_id}-{show_registered}")
-    prefix = f"run-{st.session_state.run_id}"
-    for idx, item in enumerate(shown[(page-1)*page_size:page*page_size], (page-1)*page_size):
-        label = '登録済み' if item['registered'] else ('似た語あり・要確認' if item['alternatives'] else '登録候補')
+    candidates=result['candidates']
+    a,b=st.columns(2)
+    a.metric('誤変換の疑い',f'{len(candidates)} 種類')
+    b.metric('修正候補を推定できたもの',f"{sum(bool(x['suggestions']) for x in candidates)} 種類")
+    st.subheader('2. 意図した言葉か確認する')
+    st.caption('頻出語や固有名詞という理由だけでは表示しません。同じ表記でも文脈ごとに判定します。')
+    if result['context_limit_reached']:
+        st.warning(f"全文の誤り検出は行いましたが、修正候補の詳しい比較は{result['context_checked']}箇所までです。履歴を分けると残りも比較できます。")
+    if not candidates:
+        st.success('今回の基準では、誤変換の疑いを見つけられませんでした。誤変換がないことを保証する結果ではありません。')
+    prefix=f"run-{st.session_state.run_id}"
+    for i,item in enumerate(candidates):
         with st.container(border=True):
-            col1, col2 = st.columns([4, 1])
-            with col1:
-                st.markdown(f"**{item['term']}**")
-                st.caption(f"{label} ｜ 原文一致 {item['count']}回")
-            with col2:
-                st.checkbox('選ぶ', key=f"{prefix}-select-{item['term']}", disabled=stale)
-            st.write(' / '.join(item['reasons']))
-            if item['alternatives']:
-                st.write('比較する表記：' + '、'.join(f"{a['term']}（{'既存の辞書' if a['known'] else '同じ履歴'}・{a['basis']}）" for a in item['alternatives']))
-                st.caption('似ていても別の言葉の可能性があります。置き換えの自動適用は行いません。')
-            for example in item['examples'][:2]:
+            st.markdown(f"**原文の表記：{item['original']}**")
+            st.caption(f"疑いとして検出した文脈：{item['count']}箇所")
+            if item['suggestions']:
+                st.write('意図した言葉の候補：'+' / '.join(s['term'] for s in item['suggestions']))
+                st.caption('読みの近い別の語を入れた文と原文をモデルで比べ、文脈に合うと推定した候補です。')
+            else:
+                st.write('モデルは怪しい箇所を検出しましたが、十分に優位な修正候補は出せませんでした。意図した表記を入力できます。')
+            for example in item['examples'][:3]:
                 st.text(f"原文 {example['position']}文字目：…{example['text']}…")
-            # Store editor values separately: Streamlit clears widget state on pagination.
-            edit_key = f"{prefix}-edit-{item['term']}"
-            saved_key = f"{prefix}-saved-{item['term']}"
-            known_options = [a['term'] for a in item['alternatives'] if a['known']]
-            default_term = known_options[0] if len(known_options) == 1 else item['term']
-            if known_options:
-                st.caption('既存辞書にある表記との比較です。既に登録済みなら追加は不要です。候補が意図した言葉か確認してください。')
-            st.text_input('登録する表記（必要なら修正）', value=st.session_state.get(saved_key, default_term), key=edit_key, max_chars=40, disabled=stale)
-            st.session_state[saved_key] = st.session_state[edit_key]
-            with st.expander('抽出の根拠'):
-                st.write('抽出方法：' + ' / '.join(item['sources']))
-                if item['entities']:
-                    st.write('モデルの分類：' + ', '.join(item['entities']))
-    st.subheader('3. 確認した言葉を持ち出す')
-    st.caption('ページを移動する前に、下の選択リストへ追加してください。')
-    if st.button('このページの選択をリストへ追加', disabled=stale):
-        saved = st.session_state.get(f'{prefix}-chosen', [])
-        for item in shown[(page-1)*page_size:page*page_size]:
-            if st.session_state.get(f"{prefix}-select-{item['term']}"):
-                saved.append(st.session_state.get(f"{prefix}-saved-{item['term']}", item['term']))
-        st.session_state[f'{prefix}-chosen'] = list(dict.fromkeys(saved))
-    chosen = st.session_state.get(f'{prefix}-chosen', [])
-    if chosen:
-        st.code(dictionary_export(chosen), language=None)
-        st.download_button('登録語をテキストで保存', dictionary_export(chosen), 'dictionary-candidates.txt', mime='text/plain', disabled=stale)
-        if st.button('選択リストを空にする'):
-            st.session_state[f'{prefix}-chosen'] = []
-            st.rerun()
+            default=item['suggestions'][0]['term'] if item['suggestions'] else ''
+            value=st.text_input('意図した正しい表記',value=default,key=f'{prefix}-term-{i}',max_chars=40,disabled=stale)
+            st.checkbox('この表記が自分の意図と合っている',key=f'{prefix}-approve-{i}',disabled=stale or not value.strip())
+            if any(s['registered'] for s in item['suggestions']):
+                st.caption('候補の中に登録済みの語があります。重複登録は不要です。')
+            with st.expander('判定の根拠と限界'):
+                st.write('検出の根拠：'+item['basis'])
+                st.write('文脈からの推定で、音声との照合結果ではありません。似た読みの別語が正しい場合や、候補が間違っている場合もあります。')
+                if item['suggestions']:
+                    st.caption('文脈スコアの差は正解の確率ではありません。')
+                    for s in item['suggestions']:
+                        st.text(f"{s['term']}：文脈スコア差 {s['context_gain']:.2f}、読みの類似度 {s['reading_similarity']:.2f}")
+    st.subheader('3. 確認した正しい言葉を登録する')
+    terms=[]
+    for i in range(len(candidates)):
+        if st.session_state.get(f'{prefix}-approve-{i}'):
+            value=st.session_state.get(f'{prefix}-term-{i}','').strip()
+            if value:
+                terms.append(value)
+    if terms:
+        exported=dictionary_export(terms)
+        st.code(exported,language=None)
+        st.download_button('正しい表記をテキストで保存',exported,'confirmed-dictionary.txt',mime='text/plain',disabled=stale)
     else:
-        st.caption('登録する語を選び、リストへ追加するとコピー・保存できます。')
-    st.caption('Aqua VoiceのDictionaryに正しい表記を登録してください。このアプリから設定は変更しません。テキストの保存は一括インポートの対応を意味しません。')
+        st.caption('候補を確認してチェックすると、登録用の正しい表記だけをコピー・保存できます。')
+    st.caption('Aqua VoiceのDictionaryへの登録は人間が行います。このアプリは原文やAqua Voiceの設定を自動変更しません。保存ファイルは単語リストです。')
 
-with st.expander('このアプリについて・モデルと限界'):
-    st.write('GiNZAの公開学習済みモデル ja_ginza 5.2.0をPython内で読み込み、固有表現を推論します。外部AI推論APIは使いません。英字・名詞・出現回数・読みの比較は補助ルールです。')
-    st.write('誤認識の正解を生成するモデルではありません。既存の辞書または同じ履歴にある表記だけを比較します。辞書が空でも名称の候補は抽出しますが、未知の誤表記の正解は出せない場合があります。')
-    st.write('入力のファイル保存・DB保存・本文のログ出力は実装していません。入力と結果はセッションのメモリに残ります。公開版では入力がホスティング先へ送信されます。')
-    st.markdown('[GiNZA・モデルの出典とライセンス](https://github.com/megagonlabs/ginza/tree/v5.2.0) ｜ [Aqua Voice 辞書の説明](https://aquavoice.com/guide/dictionary)')
-    st.caption('機械学習アプリ最終課題の試作品。公開URLでの動作確認と提出PDFの確定は別途必要です。')
+with st.expander('モデル・データの出典と限界'):
+    st.write('誤変換検出モデルと、同音語の文脈比較用モデル（ModernBERT）をこのアプリのPython内で実行します。外部AI推論APIは使いません。公開された取り違え表と読み辞書は、比較する語の候補を出すために使います。')
+    st.write('未知の名前、読みの大きく違う聞き違い、音声がないと区別できない語は見逃すことがあります。見つけられない場合に、一般的な単語の一覧を代わりに表示することはありません。')
+    st.write('本文のファイル・DB保存や本文ログ出力は実装していません。入力と結果はセッションメモリに残り、公開版ではホスティング先に送信されます。')
+    st.markdown('[誤変換検出モデル・MIT](https://huggingface.co/umiyosh/modernbert-ja-130m-typo-detector) ｜ [文脈比較モデル・MIT](https://huggingface.co/umiyosh/modernbert-ja-130m-homophone-scorer) ｜ [候補表・CC BY-SA 3.0](https://huggingface.co/datasets/umiyosh/jwtd-misconversion-table)')
+    st.caption('候補表の元データ：田中佑ほか「日本語 Wikipedia の編集履歴に基づく入力誤りデータセットと訂正システムの改良」(2021)。Wikipedia執筆者・京都大学言語メディア研究室。')

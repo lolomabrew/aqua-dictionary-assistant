@@ -1,21 +1,40 @@
-# 使用モデル・ライブラリ・データの出典
+# 使用モデル・データの出典と条件
 
-## GiNZA / ja_ginza 5.2.0
+## モデル（各MIT License）
 
-- 配布元：Megagon Labs / <https://github.com/megagonlabs/ginza/tree/v5.2.0>
-- モデル：<https://pypi.org/project/ja-ginza/5.2.0/>
-- GiNZAと日本語UDモデルはMIT Licenseで配布。モデルを追加学習せず推論に再利用。
-- 公式説明による学習元：UD Japanese BCCWJ r2.8（解析）、GSK2014-A (2019) BCCWJ edition（固有表現）。本アプリはその元コーパスを取得・再配布していない。
-- 単語ベクトル：chiVe。形態素解析と読み：SudachiPy / SudachiDict-core。
-- spaCy：<https://github.com/explosion/spaCy/blob/master/LICENSE>（MIT）
-- SudachiPy：<https://github.com/WorksApplications/SudachiPy>（Apache-2.0）
-- Sudachi辞書の個別出典・ライセンス：<https://github.com/WorksApplications/SudachiDict> のLEGAL・NOTICEを参照。
-- chiVe：<https://github.com/WorksApplications/chiVe> の配布条件・クレジットを参照。
-- Streamlit：<https://github.com/streamlit/streamlit/blob/develop/LICENSE>（Apache-2.0）
+- `umiyosh/modernbert-ja-130m-typo-detector`：<https://huggingface.co/umiyosh/modernbert-ja-130m-typo-detector>
+  固定リビジョン：`822bfc9df5b556237a7b92139861be5b43bc3fbc`
+- `umiyosh/modernbert-ja-130m-homophone-scorer`：<https://huggingface.co/umiyosh/modernbert-ja-130m-homophone-scorer>
+  固定リビジョン：`00f1a531c55bae03502a58967df9dee2fade4e62`
+- 作者：umiyosh。元のモデルはSB Intuitionsの`sbintuitions/modernbert-ja-130m`（MIT）。
+- 作者の説明ではJWTD、Common Voiceの音声書き起こし等で学習。詳細は各モデルカードの学習データ・出典を参照。
+- アプリ独自の追加学習・重み変更はしていない。重みは配布元から取得し、リポジトリに再配布しない。
+- 配布元の性能値は本アプリの実測値ではない。本アプリの性能として引用しない。
 
-モデルとライブラリは依存パッケージとして取得し、重みや辞書のコピーをこのリポジトリに同梱しない。インストール先パッケージのライセンス・NOTICEを保持する。
+## 候補表（CC BY-SA 3.0）
 
-## アプリ用データ
+`umiyosh/jwtd-misconversion-table`：<https://huggingface.co/datasets/umiyosh/jwtd-misconversion-table>
+固定リビジョン：`5822e4ec72e61d48a29f2cb7ca7add33fc9619ee`
+`confusions.json`、`voice-confusions.json`をそのまま取得して、比較する語の候補に使う。表自体はこのリポジトリに同梱しない。
 
-`sample.py`と`data/evaluation.json`は2026-11-12に本アプリ用に作成した架空の文章。実在する製品・組織の名称を含むが、個人の履歴や職場の業務内容を使用していない。実在の組織との提携・推奨を意味しない。
-学習用の実データは収集していない。自作評価データはこのリポジトリのコードと同じ条件で利用可能。
+出典：京都大学言語メディア研究室、日本語Wikipedia入力誤りデータセット（JWTD）v2 train。元の文章の著作者はWikipedia執筆者。表の作成者はumiyosh。
+田中佑・村脇有吾・河原大輔・黒橋禎夫「日本語 Wikipedia の編集履歴に基づく入力誤りデータセットと訂正システムの改良」言語処理学会第27回年次大会、2021。
+音声の表にはMozilla Common Voice（CC0）由来の取り違えも含まれる。個々の出典と作成手順は配布元のカードを参照。
+
+CC BY-SA 3.0：<https://creativecommons.org/licenses/by-sa/3.0/>
+この表を改変・再配布する場合は出典・変更の明示と同じライセンスの条件を維持する。本文・音声の元データは本アプリで取得・再配布しない。
+
+## ライブラリ
+
+- Transformers：Apache-2.0 / <https://github.com/huggingface/transformers>
+- PyTorch：BSD系 / <https://github.com/pytorch/pytorch/blob/main/LICENSE>
+- SudachiPy：Apache-2.0 / <https://github.com/WorksApplications/SudachiPy>
+- SudachiDict：<https://github.com/WorksApplications/SudachiDict> のLEGAL・NOTICEを参照。
+- Streamlit：Apache-2.0 / <https://github.com/streamlit/streamlit/blob/develop/LICENSE>
+
+インストールした各パッケージのライセンス・NOTICEを保持する。
+
+## 自作データ
+
+`sample.py`、`data/evaluation.json`は本アプリ用に作成した架空文。実際の履歴・業務情報は使用しない。
+評価文には公開の誤変換パターンと重なるものがあり、モデルの学習元との非重複は確認できない。
