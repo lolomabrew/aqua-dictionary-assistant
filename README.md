@@ -81,9 +81,13 @@ python3.12 -m venv .venv
 
 ## 公開・提出の状態
 
-ローカル実装・動作検証まで。GitHub公開、インターネットへのデプロイ、公開URL確認、提出PDFは未完了。
+公開アプリ：<https://aqua-dictionary-assistant.streamlit.app/>
+
+GitHubへ公開済み：<https://github.com/lolomabrew/aqua-dictionary-assistant>
+
+ローカル実装と[GitHub上のLinux検証](https://github.com/lolomabrew/aqua-dictionary-assistant/actions/runs/43140504385)に加え、Streamlit Community Cloudでの入力→モデル推論→結果表示→本人確認→単語保存を確認済み。提出PDFは原稿段階で、未提出。
 GitHubはコード保管先。Pythonの実行先はStreamlit Community Cloud等が必要で、GitHub Pagesだけでは動きません。
-この版はモデルを2つ使うため、クラウドのメモリ・初回起動時間は改めて確認する必要があります。デプロイ先を現時点で動作保証していません。
+公開先のPython 3.12 / CPU環境でモデル2つの取得・読み込みと、架空サンプルの推論を確認済み。長文や同時アクセスの負荷試験は未実施。
 `DEPLOY.md`、`REQUIREMENTS.md`、`SUBMISSION_DRAFT.md`に残作業を記録しています。
 
 ## 出典

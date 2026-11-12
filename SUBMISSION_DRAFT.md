@@ -21,8 +21,10 @@
 
 ## 4. URL
 
-公開アプリURL：未発行。GitHub URL：未公開。ローカルURLは提出に使わない。
-公開後、第三者がサインインなしで入力→推論→表示でき、ローカルPCの停止と無関係に使えることを確認する。
+公開アプリURL：<https://aqua-dictionary-assistant.streamlit.app/>
+GitHub URL：<https://github.com/lolomabrew/aqua-dictionary-assistant>
+ローカルURLは提出に使わない。
+公開共有設定と、公開URL上の入力→モデル推論→表示→本人確認→保存を確認済み。ログイン情報を持たないHTTP接続での200応答と、ローカルの本アプリ停止中の推論も確認した。
 
 ## 5. 工夫した点・つまずき（本人が確認する素材）
 
