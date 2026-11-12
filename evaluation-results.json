@@ -1,0 +1,371 @@
+{
+  "scope": "作者作成の架空評価8件。実際の音声認識精度・誤認識検出精度ではない。",
+  "target_before_run": "評価文の登録対象語 Recall@10 >= 0.70、指定した類似表記ペアの検出率 >= 0.50。未達でも正直に報告する。",
+  "precision_definition": "上位最大10件中の指定登録対象語の割合。10件未満では返却件数を分母とする。空の出力は平均から除く。",
+  "baseline": "同じ形態素・英字・頻度・読み比較を使い、学習済みNERの抽出だけを無効化。完全な機械学習なしの比較ではない。",
+  "test_count": 8,
+  "fixture_sha256": "97b5929f22f596ed0794ebede5d64970f2af35dd11f2b341d23a9df782b7ef23",
+  "python": "3.12.15",
+  "packages": {
+    "spacy": "3.7.5",
+    "ja-ginza": "5.2.0",
+    "ginza": "5.2.0",
+    "sudachidict-core": "20260723",
+    "numpy": "1.26.4",
+    "streamlit": "1.50.0"
+  },
+  "load_seconds": 0.77,
+  "summary": {
+    "model": {
+      "macro_precision_available_top10": 0.9524,
+      "macro_recall_at_10": 1.0,
+      "pair_hits": 3,
+      "pair_expected": 3,
+      "mean_seconds": 0.0296,
+      "mean_candidates_on_no_target_cases": 0
+    },
+    "without_ner": {
+      "macro_precision_available_top10": 0.9524,
+      "macro_recall_at_10": 1.0,
+      "pair_hits": 3,
+      "pair_expected": 3,
+      "mean_seconds": 0.0252,
+      "mean_candidates_on_no_target_cases": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "dev-01",
+      "split": "development",
+      "expected_terms": [
+        "Notion",
+        "GitHub"
+      ],
+      "model": {
+        "top_terms": [
+          "GitHub",
+          "Notion"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 3,
+        "seconds": 0.0307
+      },
+      "without_ner": {
+        "top_terms": [
+          "GitHub",
+          "Notion"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0253
+      }
+    },
+    {
+      "id": "dev-02",
+      "split": "development",
+      "expected_terms": [
+        "辞書登録",
+        "自社登録"
+      ],
+      "model": {
+        "top_terms": [
+          "自社登録",
+          "辞書登録"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0273
+      },
+      "without_ner": {
+        "top_terms": [
+          "自社登録",
+          "辞書登録"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0233
+      }
+    },
+    {
+      "id": "test-01",
+      "split": "evaluation",
+      "expected_terms": [
+        "Blender",
+        "Inkscape"
+      ],
+      "model": {
+        "top_terms": [
+          "Blender",
+          "Inkscape"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 1,
+        "seconds": 0.0329
+      },
+      "without_ner": {
+        "top_terms": [
+          "Inkscape",
+          "Blender"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0271
+      }
+    },
+    {
+      "id": "test-02",
+      "split": "evaluation",
+      "expected_terms": [
+        "PostgreSQL",
+        "Docker"
+      ],
+      "model": {
+        "top_terms": [
+          "Docker",
+          "PostgreSQL"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 3,
+        "seconds": 0.0309
+      },
+      "without_ner": {
+        "top_terms": [
+          "Docker",
+          "PostgreSQL"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0273
+      }
+    },
+    {
+      "id": "test-03",
+      "split": "evaluation",
+      "expected_terms": [
+        "国立天文台",
+        "理化学研究所"
+      ],
+      "model": {
+        "top_terms": [
+          "国立天文台",
+          "理化学研究所"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 4,
+        "seconds": 0.0365
+      },
+      "without_ner": {
+        "top_terms": [
+          "国立天文台",
+          "理化学研究所"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0271
+      }
+    },
+    {
+      "id": "test-04",
+      "split": "evaluation",
+      "expected_terms": [
+        "京都大学",
+        "東京工業大学"
+      ],
+      "model": {
+        "top_terms": [
+          "京都大学",
+          "東京工業大学"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 4,
+        "seconds": 0.0389
+      },
+      "without_ner": {
+        "top_terms": [
+          "京都大学",
+          "東京工業大学"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0297
+      }
+    },
+    {
+      "id": "test-05",
+      "split": "evaluation",
+      "expected_terms": [
+        "辞書登録",
+        "自社登録"
+      ],
+      "model": {
+        "top_terms": [
+          "自社登録",
+          "手順",
+          "辞書登録"
+        ],
+        "precision_at_10_available": 0.6666666666666666,
+        "recall_at_10": 1.0,
+        "candidate_count": 3,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0274
+      },
+      "without_ner": {
+        "top_terms": [
+          "自社登録",
+          "手順",
+          "辞書登録"
+        ],
+        "precision_at_10_available": 0.6666666666666666,
+        "recall_at_10": 1.0,
+        "candidate_count": 3,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0249
+      }
+    },
+    {
+      "id": "test-06",
+      "split": "evaluation",
+      "expected_terms": [
+        "各論",
+        "格論"
+      ],
+      "model": {
+        "top_terms": [
+          "格論",
+          "各論"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0281
+      },
+      "without_ner": {
+        "top_terms": [
+          "格論",
+          "各論"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0248
+      }
+    },
+    {
+      "id": "test-07",
+      "split": "evaluation",
+      "expected_terms": [],
+      "model": {
+        "top_terms": [],
+        "precision_at_10_available": null,
+        "recall_at_10": null,
+        "candidate_count": 0,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0216
+      },
+      "without_ner": {
+        "top_terms": [],
+        "precision_at_10_available": null,
+        "recall_at_10": null,
+        "candidate_count": 0,
+        "pair_hits": 0,
+        "pair_expected": 0,
+        "entity_mentions": 0,
+        "seconds": 0.0212
+      }
+    },
+    {
+      "id": "test-08",
+      "split": "evaluation",
+      "expected_terms": [
+        "Zoom",
+        "ZOOM"
+      ],
+      "model": {
+        "top_terms": [
+          "Zoom",
+          "ZOOM"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 1,
+        "seconds": 0.0203
+      },
+      "without_ner": {
+        "top_terms": [
+          "ZOOM",
+          "Zoom"
+        ],
+        "precision_at_10_available": 1.0,
+        "recall_at_10": 1.0,
+        "candidate_count": 2,
+        "pair_hits": 1,
+        "pair_expected": 1,
+        "entity_mentions": 0,
+        "seconds": 0.0193
+      }
+    }
+  ]
+}
